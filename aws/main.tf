@@ -359,10 +359,6 @@ resource "kubernetes_job" "install_certmanager_crds" {
         host_network                    = true
       }
     }
-
-  part {
-    content_type = "text/x-shellscript"
-    content      = data.template_file.userdata_agent.rendered
   }
 }
 
@@ -428,6 +424,6 @@ resource "rancher2_cloud_credential" "aws_quickstart" {
 }
 
 output "rancher-url" {
-  value = ["https://${aws_instance.rancherserver.public_ip}"]
+  value = ["https://${aws_instance.rancher_server.public_ip}"]
 }
 
