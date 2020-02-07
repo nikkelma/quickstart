@@ -1,11 +1,41 @@
 # Quickstart examples for Rancher
 
-## Summary
+Quikly stand up an HA-style Rancher management cluster in your infrastructure provider of choice.
 
-**NOTE:** Terraform 0.12.0 or higher is required for cloud based environments. (AWS and DigitalOcean)
+Intended for experimentation/evaluation ONLY.
 
-This repo contains scripts that will allow you to quickly deploy and test Rancher for POC.
-The contents aren't intended for production but are here to get you up and going with running Rancher Server for a POC and to help show the functionality
+**You will be responsible for any and all infrastructure costs incurred by these resources.**
+As a result, this repository minimizes costs by standing up the minimum required resources for a given provider.
+Use Vagrant to run Rancher locally and avoid cloud costs.
+
+## Local quickstart
+
+A local quickstart is provided in the form of Vagrant configuration.
+See [/vagrant](./vagrant) for usage details.
+
+### Requirements - Vagrant (local)
+
+- [Vagrant](https://www.vagrantup.com)
+- [VirtualBox](https://www.virtualbox.org)
+- 6GB unused RAM
+
+## Cloud quickstart
+
+Quickstarts are provided for AWS, Azure, DigitalOcean, and Google Cloud Platform.
+
+**You will be responsible for any and all infrastructure costs incurred by these resources.**
+
+By default, each quickstart will install Rancher on a single-node RKE cluster, then will provision another single-node cluster using a Custom cluster in Rancher.
+This option provides easy access to the core Rancher functionality while establishing a foundation that can be easily expanded to a full HA Rancher server.
+
+The `rancher_server_node_count` variable is provided to configure the size of the cluster used to host Rancher.
+
+Variables of the form `upstream_*` are used to configure the numbers of each kind of node in the provisioned cluster that will be managed by Rancher.
+
+### Requirements - Cloud
+
+- Terraform >=0.12.0
+- RKE terraform provider installed locally
 
 ## DO quick start
 
@@ -38,23 +68,6 @@ To remove the VM's that have been deployed run `terraform destroy --force`
 - Start `count_agent_worker_nodes` amount of droplets and add them to the custom cluster with worker role
 
 **Please be aware that you will be responsible for the usage charges with Digital Ocean**
-
-## Vagrant quick start
-
-The vagrant folder contains Vagrant code to stand up a single Rancher server instance with a 3 node cluster attached to it.
-
-The pre-requistes for this are [Vagrant](https://www.vagrantup.com) and [VirtualBox](https://www.virtualbox.org), installed on the PC you intend to run it on, and 6GB free memory
-
-### How to Use
-
-- Clone this repository and go into the vagrant subfolder
-- Run `vagrant up`
-
-When provisioning is finished the Rancher UI will become accessible on http://172.22.101.101 the default password is `admin`, but this can be updated in the config.yaml file.
-
-### How to Remove
-
-To remove the VM's that have been deployed run `vagrant destroy -f`
 
 ## Amazon AWS Quick Start
 

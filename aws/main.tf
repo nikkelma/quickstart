@@ -129,8 +129,8 @@ provider "rancher2" {
 
   alias = "bootstrap"
 
-  api_url   = "https://${aws_instance.rancher_server.public_dns}"
-  insecure  = true
+  api_url  = "https://${aws_instance.rancher_server.public_dns}"
+  insecure = true
   # ca_certs  = data.kubernetes_secret.rancher_cert.data["ca.crt"]
   bootstrap = true
 }
@@ -141,8 +141,8 @@ provider "rancher2" {
 
   alias = "admin"
 
-  api_url   = "https://${aws_instance.rancher_server.public_dns}"
-  insecure  = true
+  api_url  = "https://${aws_instance.rancher_server.public_dns}"
+  insecure = true
   # ca_certs  = data.kubernetes_secret.rancher_cert.data["ca.crt"]
   token_key = rancher2_bootstrap.admin.token
 }
@@ -208,7 +208,7 @@ resource "aws_key_pair" "quickstart_key_pair" {
 
 # Templated shell script for cloud-init user data in Rancher server
 data "template_file" "userdata_server" {
-  template = file("files/userdata_server")
+  template = file("../cloud-common/files/userdata")
 
   vars = {
     docker_version_server = var.docker_version_server
@@ -243,9 +243,9 @@ resource "aws_instance" "rancher_server" {
     ]
 
     connection {
-      type = "ssh"
-      host = self.public_ip
-      user = "ubuntu"
+      type        = "ssh"
+      host        = self.public_ip
+      user        = "ubuntu"
       private_key = file(var.ssh_key_file_name)
     }
   }
@@ -271,9 +271,9 @@ resource "rke_cluster" "rancher_cluster" {
 
 # Save kubeconfig file for interacting with the RKE cluster on your local machine
 resource "local_file" "kube_config_yaml" {
- filename = format("%s/%s" , path.root, "kube_config.yaml")
- content = rke_cluster.rancher_cluster.kube_config_yaml
-} 
+  filename = format("%s/%s", path.root, "kube_config.yaml")
+  content  = rke_cluster.rancher_cluster.kube_config_yaml
+}
 
 # Create tiller service account
 resource "kubernetes_service_account" "tiller" {
@@ -349,8 +349,9 @@ resource "kubernetes_job" "install_certmanager_crds" {
       spec {
         container {
           name    = "hyperkube"
-          image   = "gcr.io/google-containers/hyperkube:v1.16.3"
-          command = ["kubectl", "apply", "-f", "https://raw.githubusercontent.com/jetstack/cert-manager/release-0.9/deploy/manifests/00-crds.yaml"]
+          image   = "gcr.io/google-containers/kubectl:v1.16.3"
+          command = ["kubectl", "apply", "-f", "https://raw.githubusercontent.com/jetstack/cert-manager/release-0.12/deploy/manifests/00-crds.yaml", "--validate=false"]
+          # command = ["kubectl", "apply", "-f", "https://raw.githubusercontent.com/jetstack/cert-manager/release-0.9/deploy/manifests/00-crds.yaml"]
           # kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.9/deploy/manifests/00-crds.yaml
         }
         automount_service_account_token = true
@@ -368,7 +369,7 @@ resource "helm_release" "cert_manager" {
 
   name       = "cert-manager"
   namespace  = "cert-manager"
-  version    = "v0.9.1"
+  version    = "v0.12.0"
   repository = data.helm_repository.jetstack.metadata[0].name
   chart      = "cert-manager"
 }
@@ -379,7 +380,7 @@ resource "helm_release" "rancher_server" {
 
   name       = "rancher"
   namespace  = "cattle-system"
-  version    = "v2.3.3"
+  version    = "v2.3.5"
   repository = data.helm_repository.rancher_stable.metadata[0].name
   chart      = "rancher"
 
@@ -424,6 +425,6 @@ resource "rancher2_cloud_credential" "aws_quickstart" {
 }
 
 output "rancher-url" {
-  value = ["https://${aws_instance.rancher_server.public_ip}"]
+  value = ["https://${aws_instance.rancher_server.public_dns}"]
 }
 

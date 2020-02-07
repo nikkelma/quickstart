@@ -1,0 +1,6 @@
+
+aws_access_key = "xxx"
+aws_secret_key = "xxx"
+
+rancher_server_admin_password = "admin"
+
