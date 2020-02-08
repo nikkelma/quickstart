@@ -37,6 +37,7 @@ resource "aws_instance" "rancher_server" {
 
   key_name        = aws_key_pair.quickstart_key_pair.key_name
   security_groups = [aws_security_group.rancher_sg_allowall.name]
+
   user_data = templatefile("../cloud-common/files/userdata_rancher_server.template", {
     docker_version = var.docker_version
   })
@@ -60,22 +61,18 @@ resource "aws_instance" "rancher_server" {
   }
 }
 
+# Rancher resources
 module "rancher_common" {
   source = "../rancher-common"
 
-  ssh_key_file_name = var.ssh_key_file_name
-
-  node_public_ip   = aws_instance.rancher_server.public_ip
-  node_internal_ip = aws_instance.rancher_server.private_ip
-
+  ssh_key_file_name      = var.ssh_key_file_name
+  node_public_ip         = aws_instance.rancher_server.public_ip
+  node_internal_ip       = aws_instance.rancher_server.private_ip
   rke_kubernetes_version = var.rke_kubernetes_version
-
-  cert_manager_version = var.cert_manager_version
-  rancher_version      = var.rancher_version
-
-  rancher_server_dns = aws_instance.rancher_server.public_dns
-
-  admin_password = var.rancher_server_admin_password
+  cert_manager_version   = var.cert_manager_version
+  rancher_version        = var.rancher_version
+  rancher_server_dns     = aws_instance.rancher_server.public_dns
+  admin_password         = var.rancher_server_admin_password
 }
 
 resource "aws_instance" "quickstart_node" {
@@ -84,6 +81,7 @@ resource "aws_instance" "quickstart_node" {
 
   key_name        = aws_key_pair.quickstart_key_pair.key_name
   security_groups = [aws_security_group.rancher_sg_allowall.name]
+
   user_data = templatefile("../cloud-common/files/userdata_quickstart_node.template", {
     docker_version   = var.docker_version
     register_command = module.rancher_common.custom_cluster_command
@@ -103,7 +101,7 @@ resource "aws_instance" "quickstart_node" {
   }
 
   tags = {
-    Name    = "${var.prefix}-rancher-server"
+    Name    = "${var.prefix}-quickstart-node"
     Creator = "rancher-quickstart"
   }
 }

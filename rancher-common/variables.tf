@@ -20,7 +20,7 @@ variable "node_internal_ip" {
 
 variable "rke_kubernetes_version" {
   type        = string
-  description = "RKE version to use for Rancher server cluster"
+  description = "Kubernetes version to use for Rancher server RKE cluster"
   default     = "v1.15.3-rancher1-1"
 }
 
@@ -46,3 +46,10 @@ variable "admin_password" {
   type        = string
   description = "Admin password to use for Rancher server bootstrap"
 }
+
+variable "workload_kubernetes_version" {
+  type        = string
+  description = "Kubernetes version to use for managed workload cluster"
+  default     = "1.17.2-rancher1-2"
+}
+

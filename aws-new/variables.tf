@@ -42,8 +42,14 @@ variable "ssh_key_file_name" {
 
 variable "rke_kubernetes_version" {
   type        = string
-  description = "RKE version to use for Rancher server cluster"
+  description = "Kubernetes version to use for Rancher server RKE cluster"
   default     = "v1.15.3-rancher1-1"
+}
+
+variable "workload_kubernetes_version" {
+  type        = string
+  description = "Kubernetes version to use for managed workload cluster"
+  default     = "v1.17.2-rancher1-2"
 }
 
 variable "cert_manager_version" {
