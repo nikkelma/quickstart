@@ -5,12 +5,12 @@ provider "local" {
 
 # RKE provider - community plugin as of 2020-02-02
 provider "rke" {
-  version = "~> 0.14"
+  version = "0.14.1"
 }
 
 # Kubernetes provider
 provider "kubernetes" {
-  version = "~> 1.10"
+  version = "1.10.0"
 
   host = rke_cluster.rancher_cluster.api_server_url
 

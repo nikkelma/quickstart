@@ -16,8 +16,8 @@ resource "rancher2_bootstrap" "admin" {
 resource "rancher2_cluster" "quickstart_workload" {
   provider = rancher2.admin
 
-  name        = "quickstart-workload"
-  description = "Custom workload cluster created for quickstart"
+  name        = var.workload_cluster_name
+  description = "Custom workload cluster created by Rancher quickstart"
 
   rke_config {
     kubernetes_version = var.workload_kubernetes_version

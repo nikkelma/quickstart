@@ -5,6 +5,6 @@ output "rancher_url" {
 }
 
 output "custom_cluster_command" {
-  value       = rancher2_cluster.quickstart.cluster_registration_token.0.node_command
+  value       = rancher2_cluster.quickstart_workload.cluster_registration_token.0.node_command
   description = "Docker command used to add a node to the quickstart cluster"
 }

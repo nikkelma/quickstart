@@ -68,3 +68,9 @@ variable "rancher_server_admin_password" {
   type        = string
   description = "Admin password to use for Rancher server bootstrap"
 }
+
+
+# Local variables used to reduce repetition
+locals {
+  node_username = "ubuntu"
+}

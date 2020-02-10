@@ -1,11 +1,5 @@
 # Variables for rancher common module
 
-variable "ssh_key_file_name" {
-  type        = string
-  description = "File path and name of SSH private key used for infrastructure and RKE"
-  default     = "~/.ssh/id_rsa"
-}
-
 # Required
 variable "node_public_ip" {
   type        = string
@@ -14,8 +8,20 @@ variable "node_public_ip" {
 
 variable "node_internal_ip" {
   type        = string
-  description = "IP of compute node for Rancher cluster used for internal cluster communication"
+  description = "Internal IP of compute node for Rancher cluster"
   default     = ""
+}
+
+# Required
+variable "node_username" {
+  type        = string
+  description = "Username used for SSH access to the Rancher server cluster node"
+}
+
+variable "ssh_key_file_name" {
+  type        = string
+  description = "File path and name of SSH private key used for infrastructure and RKE"
+  default     = "~/.ssh/id_rsa"
 }
 
 variable "rke_kubernetes_version" {
@@ -42,6 +48,7 @@ variable "rancher_server_dns" {
   description = "DNS host name of the Rancher server"
 }
 
+# Required
 variable "admin_password" {
   type        = string
   description = "Admin password to use for Rancher server bootstrap"
@@ -53,3 +60,8 @@ variable "workload_kubernetes_version" {
   default     = "1.17.2-rancher1-2"
 }
 
+# Required
+variable "workload_cluster_name" {
+  type        = string
+  description = "Name for created custom workload cluster"
+}
