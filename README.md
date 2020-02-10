@@ -46,11 +46,11 @@ This setup provides easy access to the core Rancher functionality while establis
 
 To begin with any quickstart, perform the following steps:
 
-0. Clone or download this repository to a local folder
-0. Choose a cloud provider and navigate into the provider's folder
-0. Copy or rename `terraform.tfvars.example` to `terraform.tfvars` and fill in all required variables
-0. Run `terraform init`
-0. Run `terraform apply`
+1. Clone or download this repository to a local folder
+1. Choose a cloud provider and navigate into the provider's folder
+1. Copy or rename `terraform.tfvars.example` to `terraform.tfvars` and fill in all required variables
+1. Run `terraform init`
+1. Run `terraform apply`
 
 When provisioning has finished, terraform will output the URL to connect to the Rancher server.
 Two sets of Kubernetes configurations will also be generated:
