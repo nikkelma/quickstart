@@ -8,7 +8,6 @@ variable "gcp_account_json" {
 variable "gcp_project" {
   type        = string
   description = "GCP project in which the quickstart will be deployed."
-  default     = "shipwreck"
 }
 
 variable "gcp_region" {
