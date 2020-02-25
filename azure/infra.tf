@@ -15,7 +15,7 @@ resource "azurerm_public_ip" "rancher-server-pip" {
   name                = "rancher-server-pip"
   location            = azurerm_resource_group.rancher-quickstart.location
   resource_group_name = azurerm_resource_group.rancher-quickstart.name
-  allocation_method   = "Static"
+  allocation_method   = "Dynamic"
 
   tags = {
     Creator = "rancher-quickstart"
@@ -60,39 +60,37 @@ resource "azurerm_network_interface" "rancher-server-interface" {
   }
 }
 
-# Azure virtual machine for creating a single node RKE cluster and installing the Rancher Server
-resource "azurerm_virtual_machine" "rancher_server" {
+# Azure linux virtual machine for creating a single node RKE cluster and installing the Rancher Server
+resource "azurerm_linux_virtual_machine" "rancher_server" {
   name                  = "${var.prefix}-rancher-server"
   location              = azurerm_resource_group.rancher-quickstart.location
   resource_group_name   = azurerm_resource_group.rancher-quickstart.name
   network_interface_ids = [azurerm_network_interface.rancher-server-interface.id]
-  vm_size               = var.instance_type
+  size                  = var.instance_type
+  admin_username        = local.node_username
 
-  storage_image_reference {
+  custom_data = base64encode(templatefile("../cloud-common/files/userdata_rancher_server.template", {
+    docker_version = var.docker_version
+    username       = local.node_username
+  }))
+
+  source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
     sku       = "18.04-LTS"
     version   = "latest"
   }
-  storage_os_disk {
-    name          = "rancher-quickstart-osdisk"
-    create_option = "FromImage"
+
+  admin_ssh_key {
+    username   = local.node_username
+    public_key = file("${var.ssh_key_file_name}.pub")
   }
-  os_profile {
-    computer_name  = "${var.prefix}-rancher-server"
-    admin_username = local.node_username
-    custom_data = templatefile("../cloud-common/files/userdata_rancher_server.template", {
-      docker_version = var.docker_version
-      username       = local.node_username
-    })
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
   }
-  os_profile_linux_config {
-    disable_password_authentication = true
-    ssh_keys {
-      key_data = file("${var.ssh_key_file_name}.pub")
-      path     = "/home/${local.node_username}/.ssh/authorized_keys"
-    }
-  }
+
   tags = {
     Creator = "rancher-quickstart"
   }
@@ -104,7 +102,7 @@ resource "azurerm_virtual_machine" "rancher_server" {
 
     connection {
       type        = "ssh"
-      host        = azurerm_public_ip.rancher-server-pip.ip_address
+      host        = self.public_ip_address
       user        = local.node_username
       private_key = file(var.ssh_key_file_name)
     }
@@ -115,8 +113,8 @@ resource "azurerm_virtual_machine" "rancher_server" {
 module "rancher_common" {
   source = "../rancher-common"
 
-  node_public_ip         = azurerm_public_ip.rancher-server-pip.ip_address
-  node_internal_ip       = azurerm_network_interface.rancher-server-interface.private_ip_address
+  node_public_ip         = azurerm_linux_virtual_machine.rancher_server.public_ip_address
+  node_internal_ip       = azurerm_linux_virtual_machine.rancher_server.private_ip_address
   node_username          = local.node_username
   ssh_key_file_name      = var.ssh_key_file_name
   rke_kubernetes_version = var.rke_kubernetes_version
@@ -124,7 +122,7 @@ module "rancher_common" {
   cert_manager_version = var.cert_manager_version
   rancher_version      = var.rancher_version
 
-  rancher_server_dns = "${replace(azurerm_public_ip.rancher-server-pip.ip_address, ".", "-")}.nip.io"
+  rancher_server_dns = "${replace(azurerm_linux_virtual_machine.rancher_server.public_ip_address, ".", "-")}.nip.io"
   admin_password     = var.rancher_server_admin_password
 
   workload_kubernetes_version = var.workload_kubernetes_version
@@ -136,7 +134,7 @@ resource "azurerm_public_ip" "quickstart-node-pip" {
   name                = "quickstart-node-pip"
   location            = azurerm_resource_group.rancher-quickstart.location
   resource_group_name = azurerm_resource_group.rancher-quickstart.name
-  allocation_method   = "Static"
+  allocation_method   = "Dynamic"
 
   tags = {
     Creator = "rancher-quickstart"
@@ -161,40 +159,38 @@ resource "azurerm_network_interface" "quickstart-node-interface" {
   }
 }
 
-# Azure virtual machine for creating a single node RKE cluster and installing the Rancher Server
-resource "azurerm_virtual_machine" "quickstart-node" {
+# Azure linux virtual machine for creating a single node RKE cluster and installing the Rancher Server
+resource "azurerm_linux_virtual_machine" "quickstart-node" {
   name                  = "${var.prefix}-quickstart-node"
   location              = azurerm_resource_group.rancher-quickstart.location
   resource_group_name   = azurerm_resource_group.rancher-quickstart.name
   network_interface_ids = [azurerm_network_interface.quickstart-node-interface.id]
-  vm_size               = var.instance_type
+  size                  = var.instance_type
+  admin_username        = local.node_username
 
-  storage_image_reference {
+  custom_data = base64encode(templatefile("../cloud-common/files/userdata_quickstart_node.template", {
+    docker_version   = var.docker_version
+    username         = local.node_username
+    register_command = module.rancher_common.custom_cluster_command
+  }))
+
+  source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
     sku       = "18.04-LTS"
     version   = "latest"
   }
-  storage_os_disk {
-    name          = "quickstart-node-osdisk"
-    create_option = "FromImage"
+
+  admin_ssh_key {
+    username   = local.node_username
+    public_key = file("${var.ssh_key_file_name}.pub")
   }
-  os_profile {
-    computer_name  = "${var.prefix}-quickstart-node"
-    admin_username = local.node_username
-    custom_data = templatefile("../cloud-common/files/userdata_rancher_server.template", {
-      docker_version   = var.docker_version
-      username         = local.node_username
-      register_command = module.rancher_common.custom_cluster_command
-    })
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
   }
-  os_profile_linux_config {
-    disable_password_authentication = true
-    ssh_keys {
-      key_data = file("${var.ssh_key_file_name}.pub")
-      path     = "/home/${local.node_username}/.ssh/authorized_keys"
-    }
-  }
+
   tags = {
     Creator = "rancher-quickstart"
   }
@@ -206,7 +202,7 @@ resource "azurerm_virtual_machine" "quickstart-node" {
 
     connection {
       type        = "ssh"
-      host        = azurerm_public_ip.quickstart-node-pip.ip_address
+      host        = self.public_ip_address
       user        = local.node_username
       private_key = file(var.ssh_key_file_name)
     }

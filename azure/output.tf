@@ -3,5 +3,5 @@ output "rancher_server_url" {
 }
 
 output "workload_node_ip" {
-  value = azurerm_public_ip.quickstart-node-pip.ip_address
+  value = azurerm_linux_virtual_machine.quickstart-node.public_ip_address
 }
