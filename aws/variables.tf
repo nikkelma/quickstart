@@ -53,11 +53,7 @@ variable "rke_kubernetes_version" {
 variable "workload_kubernetes_version" {
   type        = string
   description = "Kubernetes version to use for managed workload cluster"
-<<<<<<< HEAD
-  default     = "v1.17.2-rancher1-2"
-=======
   default     = "v1.16.6-rancher1-2"
->>>>>>> 7d2a63c6baf2d3ef97a695fc6304a93483e571ff
 }
 
 variable "cert_manager_version" {
@@ -72,10 +68,7 @@ variable "rancher_version" {
   default     = "v2.3.5"
 }
 
-<<<<<<< HEAD
-=======
 # Required
->>>>>>> 7d2a63c6baf2d3ef97a695fc6304a93483e571ff
 variable "rancher_server_admin_password" {
   type        = string
   description = "Admin password to use for Rancher server bootstrap"
