@@ -39,7 +39,7 @@ This setup provides easy access to the core Rancher functionality while establis
 ### Requirements - Cloud
 
 - Terraform >=0.12.0
-- RKE terraform provider version 0.14.1 installed locally - see [rancher/terraform-provider-rke](https://github.com/rancher/terraform-provider-rke) for installation instructions
+- RKE terraform provider version 0.14.1 installed locally - see [`Using the provider` in rancher/terraform-provider-rke](https://github.com/rancher/terraform-provider-rke#using-the-provider) for installation instructions
 - Credentials for the cloud provider used for the quickstart
 
 ### Deploy
@@ -64,6 +64,6 @@ For more details on each cloud provider, refer to the documentation in their res
 When you're finished exploring the Rancher server, use terraform to tear down all resources in the quickstart.
 
 **NOTE: Any resources not provisioned by the quickstart are not guaranteed to be destroyed when tearing down the quickstart.**
-Make sure you tear down any resources you provisioned to not waste money.
+Make sure you tear down any resources you provisioned manually before running the destroy command.
 
 Run `terraform destroy -auto-approve` to remove all resources without prompting for confirmation.

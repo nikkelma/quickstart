@@ -57,7 +57,7 @@ variable "admin_password" {
 variable "workload_kubernetes_version" {
   type        = string
   description = "Kubernetes version to use for managed workload cluster"
-  default     = "1.17.2-rancher1-2"
+  default     = "v1.16.6-rancher1-2"
 }
 
 # Required
