@@ -105,7 +105,7 @@ resource "google_compute_instance" "quickstart_node" {
 
   metadata = {
     ssh-keys = "ubuntu:${file("${var.ssh_key_file_name}.pub")}"
-    user-data = templatefile("../cloud-common/files/userdata_rancher_server.template", {
+    user-data = templatefile("../cloud-common/files/userdata_quickstart_node.template", {
       docker_version   = var.docker_version
       username         = local.node_username
       register_command = module.rancher_common.custom_cluster_command

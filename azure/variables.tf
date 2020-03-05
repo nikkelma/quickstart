@@ -34,7 +34,7 @@ variable "prefix" {
 
 variable "instance_type" {
   type        = string
-  description = "Instance type used for all virtual machines"
+  description = "Instance type used for all linux virtual machines"
   default     = "Standard_DS2_v2"
 }
 
@@ -59,7 +59,7 @@ variable "rke_kubernetes_version" {
 variable "workload_kubernetes_version" {
   type        = string
   description = "Kubernetes version to use for managed workload cluster"
-  default     = "v1.17.2-rancher1-2"
+  default     = "v1.16.6-rancher1-2"
 }
 
 variable "cert_manager_version" {
@@ -74,10 +74,12 @@ variable "rancher_version" {
   default     = "v2.3.5"
 }
 
+# Required
 variable "rancher_server_admin_password" {
   type        = string
   description = "Admin password to use for Rancher server bootstrap"
 }
+
 
 # Local variables used to reduce repetition
 locals {
